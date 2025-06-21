@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "勤怠管理システム 一括入力",
+  "version": "1.0.0",
+  "description": "勤怠管理システムの一括入力画面で勤怠情報を自動入力するChrome拡張機能",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "勤怠一括入力"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["dist/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+} 
