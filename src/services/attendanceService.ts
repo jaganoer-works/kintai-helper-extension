@@ -102,27 +102,48 @@ export class AttendanceService {
     }
   }
 
-  // 時刻を入力
-  private setTimeValue(input: HTMLInputElement, timeValue: string, fieldName: string): boolean {
+  // 時刻を入力（強化版）
+  private async setTimeValue(input: HTMLInputElement, timeValue: string, fieldName: string): Promise<boolean> {
     try {
+      // 現在の値をログ出力
+      const currentValue = input.value;
+      this.logger.info(`${fieldName}設定前: "${currentValue}" → 設定予定: "${timeValue}"`);
+
+      // フォーカスを当てる
+      input.focus();
+      input.click();
+      await this.sleep(100);
+
+      // 値をクリアしてから設定
       input.value = '';
       input.value = timeValue;
 
-      const events = ['input', 'change', 'blur'];
+      // より多くのイベントを発火
+      const events = ['input', 'change', 'blur', 'keyup', 'keydown', 'paste'];
       events.forEach(eventType => {
         const event = new Event(eventType, { bubbles: true });
         input.dispatchEvent(event);
       });
 
-      return true;
+      // 少し待機してから値を確認
+      await this.sleep(200);
+      const newValue = input.value;
+      this.logger.info(`${fieldName}設定後: "${newValue}" (期待値: "${timeValue}")`);
+
+      return newValue === timeValue;
     } catch (e) {
       this.logger.error(`${fieldName}設定エラー: ${e instanceof Error ? e.message : 'Unknown error'}`);
       return false;
     }
   }
 
+  // スリープ関数
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   // 項目別に勤怠時間を設定
-  public setWorkdayScheduleByField(): ProcessResult {
+  public async setWorkdayScheduleByField(): Promise<ProcessResult> {
     const targetRows = this.getTargetRows();
     // 勤怠データの取得（ログ出力用）
     this.getAttendanceData();
@@ -148,7 +169,7 @@ export class AttendanceService {
 
     this.logger.info(`処理開始: ${targetRows.length}件の${this.config.targetDayType}を項目別に処理します`);
 
-    targetRows.forEach(({ row, day }) => {
+    for (const { row, day } of targetRows) {
       try {
         const { existingData, hasData } = this.checkExistingData(row);
         this.logExistingData(day, existingData, hasData);
@@ -163,7 +184,7 @@ export class AttendanceService {
             this.logger.warn(`${day}日: 出勤時刻「${existingData.clockIn}」が既存のためスキップ`);
             result.skipped.clockIn++;
           } else {
-            if (this.setTimeValue(clockInInput, this.config.startTime, '出勤時刻')) {
+            if (await this.setTimeValue(clockInInput, this.config.startTime, '出勤時刻')) {
               this.logger.info(`${day}日: 出勤時刻を${this.config.startTime}に設定`);
               result.success.clockIn++;
             } else {
@@ -183,7 +204,7 @@ export class AttendanceService {
             this.logger.warn(`${day}日: 退勤時刻「${existingData.clockOut}」が既存のためスキップ`);
             result.skipped.clockOut++;
           } else {
-            if (this.setTimeValue(clockOutInput, this.config.endTime, '退勤時刻')) {
+            if (await this.setTimeValue(clockOutInput, this.config.endTime, '退勤時刻')) {
               this.logger.info(`${day}日: 退勤時刻を${this.config.endTime}に設定`);
               result.success.clockOut++;
             } else {
@@ -203,7 +224,7 @@ export class AttendanceService {
             this.logger.warn(`${day}日: 休憩開始時刻「${existingData.breakStart}」が既存のためスキップ`);
             result.skipped.breakStart++;
           } else {
-            if (this.setTimeValue(breakStartInput, this.config.breakStartTime, '休憩開始時刻')) {
+            if (await this.setTimeValue(breakStartInput, this.config.breakStartTime, '休憩開始時刻')) {
               this.logger.info(`${day}日: 休憩開始時刻を${this.config.breakStartTime}に設定`);
               result.success.breakStart++;
             } else {
@@ -223,7 +244,7 @@ export class AttendanceService {
             this.logger.warn(`${day}日: 休憩終了時刻「${existingData.breakEnd}」が既存のためスキップ`);
             result.skipped.breakEnd++;
           } else {
-            if (this.setTimeValue(breakEndInput, this.config.breakEndTime, '休憩終了時刻')) {
+            if (await this.setTimeValue(breakEndInput, this.config.breakEndTime, '休憩終了時刻')) {
               this.logger.info(`${day}日: 休憩終了時刻を${this.config.breakEndTime}に設定`);
               result.success.breakEnd++;
             } else {
@@ -233,10 +254,13 @@ export class AttendanceService {
           }
         }
 
+        // 処理間隔を設ける
+        await this.sleep(150);
+
       } catch (e) {
         this.logger.error(`${day}日の処理中にエラーが発生: ${e instanceof Error ? e.message : 'Unknown error'}`);
       }
-    });
+    }
 
     this.logResultSummary(result);
     return result;

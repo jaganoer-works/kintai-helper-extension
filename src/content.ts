@@ -33,17 +33,23 @@ class AttendanceAutomation {
   private initialize(): void {
     // メッセージリスナーを設定
     chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-      this.handleMessage(message, sendResponse);
+      this.handleMessage(message, sendResponse).catch(error => {
+        console.error('メッセージ処理中にエラーが発生:', error);
+        sendResponse({ 
+          success: false, 
+          error: `メッセージ処理中にエラーが発生しました: ${error instanceof Error ? error.message : 'Unknown error'}` 
+        });
+      });
       return true; // 非同期レスポンスのため
     });
 
     console.log('勤怠管理システム 一括入力拡張機能が読み込まれました');
   }
 
-  private handleMessage(message: any, sendResponse: (response: any) => void): void {
+  private async handleMessage(message: any, sendResponse: (response: any) => void): Promise<void> {
     switch (message.type) {
       case 'EXECUTE_ATTENDANCE_INPUT':
-        this.executeAttendanceInput(message.config, sendResponse);
+        await this.executeAttendanceInput(message.config, sendResponse);
         break;
       case 'GET_CONFIG':
         sendResponse({ config: this.config });
@@ -56,7 +62,7 @@ class AttendanceAutomation {
     }
   }
 
-  private executeAttendanceInput(config: Partial<AttendanceConfig>, sendResponse: (response: any) => void): void {
+  private async executeAttendanceInput(config: Partial<AttendanceConfig>, sendResponse: (response: any) => void): Promise<void> {
     try {
       // 設定を更新
       if (config) {
@@ -65,7 +71,7 @@ class AttendanceAutomation {
       }
 
       // 勤怠入力処理を実行
-      const result: ProcessResult = this.service.setWorkdayScheduleByField();
+      const result: ProcessResult = await this.service.setWorkdayScheduleByField();
 
       // 結果を計算
       const totalSuccess = result.success.clockIn + result.success.clockOut + result.success.breakStart + result.success.breakEnd;
