@@ -280,3 +280,268 @@ executeAttendanceBulkInputUltra();
 4. 実行したスクリプトの種類
 
 詳細なログはコンソールで確認できます。 
+
+# 勤怠管理システム 一括入力 Chrome拡張機能
+
+TypeScriptで開発された勤怠管理システムの一括入力Chrome拡張機能です。勤怠一括入力画面で、DOM解析とブラウザ自動操作により勤怠情報を一括入力できます。
+
+## 機能
+
+- **項目別入力制御**: 各項目（出勤・退勤・休憩開始・休憩終了）ごとに「入力する／しない」を選択可能
+- **項目別スキップ制御**: 各項目ごとに既存データがある場合のスキップ設定
+- **美しいUI**: モダンなデザインのポップアップインターフェース
+- **設定の永続化**: 設定をChromeストレージに保存
+- **詳細なログ出力**: 処理状況をリアルタイムで確認可能
+- **TypeScript対応**: 型安全性と開発効率の向上
+- **タイミング問題解決**: 値設定の信頼性を大幅に向上
+
+## プロジェクト構成
+
+```
+attendance-automation-extension/
+├── src/
+│   ├── types/
+│   │   └── index.ts              # 型定義
+│   ├── utils/
+│   │   └── logger.ts             # ログ出力機能
+│   ├── services/
+│   │   └── attendanceService.ts  # 勤怠入力メインロジック（強化版）
+│   ├── content.ts                # コンテンツスクリプト（非同期対応）
+│   ├── background.ts             # バックグラウンドスクリプト
+│   └── popup.ts                  # ポップアップスクリプト
+├── dist/                         # ビルド出力ディレクトリ
+├── manifest.json                 # Chrome拡張機能マニフェスト
+├── popup.html                    # ポップアップHTML
+├── package.json                  # プロジェクト設定
+├── tsconfig.json                 # TypeScript設定
+└── README.md                     # このファイル
+```
+
+## セットアップ
+
+### 1. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 2. TypeScriptのビルド
+
+```bash
+npm run build
+```
+
+### 3. Chrome拡張機能のインストール
+
+1. Chromeで `chrome://extensions/` を開く
+2. 「デベロッパーモード」を有効にする
+3. 「パッケージ化されていない拡張機能を読み込む」をクリック
+4. プロジェクトのルートディレクトリを選択
+
+## 使用方法
+
+### 1. 拡張機能を有効化
+
+勤怠管理システムの一括入力ページで拡張機能アイコンをクリックします。
+
+### 2. 設定を調整
+
+ポップアップで以下の設定を行います：
+
+- **時刻設定**: 出勤・退勤・休憩時間を設定
+- **対象設定**: 対象とする勤怠区分を選択
+- **入力項目設定**: 各項目の入力有無を選択
+- **スキップ設定**: 各項目の既存データスキップ有無を選択
+
+### 3. 実行
+
+「勤怠一括入力実行」ボタンをクリックして処理を開始します。
+
+## 設定オプション
+
+### 時刻設定
+- `startTime`: 出勤時刻（デフォルト: 09:00）
+- `endTime`: 退勤時刻（デフォルト: 18:00）
+- `breakStartTime`: 休憩開始時刻（デフォルト: 12:00）
+- `breakEndTime`: 休憩終了時刻（デフォルト: 13:00）
+
+### 対象設定
+- `targetDayType`: 対象勤怠区分（平日、所定休日、法定休日）
+
+### 入力項目設定
+- `useClockIn`: 出勤時刻を自動入力する
+- `useClockOut`: 退勤時刻を自動入力する
+- `useBreakStart`: 休憩開始時刻を自動入力する
+- `useBreakEnd`: 休憩終了時刻を自動入力する
+
+### スキップ設定
+- `skipClockIn`: 出勤時刻の既存データをスキップ
+- `skipClockOut`: 退勤時刻の既存データをスキップ
+- `skipBreakStart`: 休憩開始時刻の既存データをスキップ
+- `skipBreakEnd`: 休憩終了時刻の既存データをスキップ
+
+## ⚡ タイミング問題の解決策
+
+### 問題の原因
+- DOMの動的生成
+- ページ読み込みタイミング
+- JavaScriptの非同期処理
+- 要素の表示遅延
+- 特殊なUIフレームワーク（React/Vue等）の制御
+
+### 解決策
+
+#### 1. 値設定処理の強化
+- **フォーカス・クリック操作**: 要素にフォーカスを当ててから値を設定
+- **複数イベント発火**: input, change, blur, keyup, keydown, pasteイベントを発火
+- **非同期処理**: 適切な待機時間を設けて処理の信頼性を向上
+- **値確認ログ**: 設定前後の値をログ出力してデバッグを支援
+
+#### 2. 処理間隔の調整
+- **150msの処理間隔**: 各行の処理間に適切な待機時間を設定
+- **要素読み込み待機**: 要素が完全に表示されるまで待機
+
+#### 3. エラーハンドリングの強化
+- **リトライ機能**: 値設定失敗時の自動リトライ
+- **詳細ログ**: エラーの原因を特定しやすくするログ出力
+
+### 使用例
+
+#### 既存データを上書きする場合
+```javascript
+// スキップ設定をすべてオフにして実行
+// ポップアップで「既存データをスキップ」のチェックをすべて外す
+```
+
+#### 特定項目のみ上書きする場合
+```javascript
+// 出勤時刻のみ上書き、他はスキップ
+// 出勤時刻のスキップ設定のみオフ、他はオン
+```
+
+## 開発
+
+### 開発モード
+
+```bash
+npm run dev
+```
+
+### ビルド
+
+```bash
+npm run build
+```
+
+### ファイル監視
+
+```bash
+npm run watch
+```
+
+## 技術スタック
+
+- **TypeScript**: 型安全性と開発効率の向上
+- **Chrome Extension API**: ブラウザ拡張機能開発
+- **DOM API**: ページ要素の操作
+- **Chrome Storage API**: 設定の永続化
+- **Webpack**: モジュールバンドリング
+
+## 型定義
+
+### AttendanceConfig
+```typescript
+interface AttendanceConfig {
+  startTime: string;
+  endTime: string;
+  breakStartTime: string;
+  breakEndTime: string;
+  targetDayType: string;
+  enableLogging: boolean;
+  showDetailedLog: boolean;
+  useClockIn: boolean;
+  useClockOut: boolean;
+  useBreakStart: boolean;
+  useBreakEnd: boolean;
+  skipClockIn: boolean;
+  skipClockOut: boolean;
+  skipBreakStart: boolean;
+  skipBreakEnd: boolean;
+}
+```
+
+### ProcessResult
+```typescript
+interface ProcessResult {
+  success: {
+    clockIn: number;
+    clockOut: number;
+    breakStart: number;
+    breakEnd: number;
+  };
+  error: {
+    clockIn: number;
+    clockOut: number;
+    breakStart: number;
+    breakEnd: number;
+  };
+  skipped: {
+    clockIn: number;
+    clockOut: number;
+    breakStart: number;
+    breakEnd: number;
+  };
+  ignored: {
+    clockIn: number;
+    clockOut: number;
+    breakStart: number;
+    breakEnd: number;
+  };
+  total: number;
+}
+```
+
+## トラブルシューティング
+
+### よくある問題
+
+1. **「勤怠データが見つかりません」エラー**
+   - 正しい勤怠一括入力画面にいることを確認
+   - ページの読み込みが完了していることを確認
+
+2. **「対象となる行が見つかりません」エラー**
+   - `targetDayType`の設定を確認
+   - テーブルにデータが表示されていることを確認
+
+3. **拡張機能が動作しない**
+   - 拡張機能が有効になっているか確認
+   - ページを再読み込みしてから再実行
+
+4. **値が反映されない**
+   - 詳細ログを確認して値設定の状況をチェック
+   - スキップ設定が正しく設定されているか確認
+   - ページの再読み込みを試行
+
+### デバッグ方法
+
+1. Chrome DevToolsのコンソールでログを確認
+2. 拡張機能の管理ページでエラーを確認
+3. 設定値を一時的に変更して動作確認
+4. 詳細ログ機能を有効にして処理状況を確認
+
+## ライセンス
+
+MIT License
+
+## 更新履歴
+
+- **v1.1.0**: タイミング問題解決版
+  - 値設定処理の大幅強化
+  - 非同期処理への対応
+  - デバッグ機能の追加
+  - エラーハンドリングの改善
+- **v1.0.0**: TypeScript版Chrome拡張機能としてリリース
+  - 項目別入力制御機能
+  - 美しいUIデザイン
+  - 設定の永続化
+  - 型安全性の向上 
