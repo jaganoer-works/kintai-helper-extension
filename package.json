@@ -6,7 +6,9 @@
   "scripts": {
     "build": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",
-    "watch": "webpack --mode=development --watch"
+    "watch": "webpack --mode=development --watch",
+    "release": "npm run build && npm run zip",
+    "zip": "zip -r kintai-helper-v$npm_package_version.zip . -x 'node_modules/*' 'src/*' '*.ts' 'webpack.config.js' 'tsconfig.json' '.git/*' '.gitignore' 'package-lock.json' '*.md' '.serena/*' '.kiro/*' 'docs/structure.md'"
   },
   "keywords": [
     "chrome-extension",
