@@ -52,7 +52,7 @@ npm run build
 ```
 
 #### 3. Chromeに拡張機能を追加
-1. Chrome/Edgeブラウザで `chrome://extensions/` を開く
+1. Chromeブラウザで `chrome://extensions/` を開く
 2. 右上の「デベロッパーモード」をONにする
 3. 「パッケージ化されていない拡張機能を読み込む」をクリック
 4. ダウンロードしたフォルダ（`kintai-helper-extension`）を選択
@@ -68,7 +68,7 @@ npm run build
 
 ### 1. 前提条件
 - 対応する勤怠管理システムのアカウントを持っていること
-- Chrome/Edge ブラウザを使用していること
+- Chrome ブラウザを使用していること
 - 勤怠の一括入力権限があること
 
 ### 2. 基本的な使用手順
