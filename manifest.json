@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "勤怠管理システム 一括入力",
+  "name": "Kintai Helper",
   "version": "1.0.0",
-  "description": "勤怠管理システムの一括入力画面で勤怠情報を自動入力するChrome拡張機能",
+  "description": "勤怠管理システムの一括入力を効率化するChrome拡張機能",
   "permissions": [
     "activeTab",
     "storage"
@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "勤怠一括入力"
+    "default_title": "Kintai Helper"
   },
   "content_scripts": [
     {

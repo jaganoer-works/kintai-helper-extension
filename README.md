@@ -1,301 +1,129 @@
-# 勤怠管理システム 一括入力スクリプト
+# Kintai Helper - 勤怠入力支援 Chrome拡張機能
 
-勤怠管理システムの一括入力画面で、ブラウザのコンソールから実行できるJavaScriptスクリプト群です。
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
+![Chrome Extension](https://img.shields.io/badge/chrome-extension-green.svg)
+![TypeScript](https://img.shields.io/badge/typescript-ready-blue.svg)
+![Unofficial](https://img.shields.io/badge/unofficial-tool-red.svg)
 
-## 📁 ファイル構成
+Money Forward クラウド勤怠の一括入力画面で勤怠データを効率的に入力できる非公式Chrome拡張機能です。TypeScriptで開発され、DOM解析とブラウザ自動操作により月次勤怠入力の作業時間を大幅に短縮します。
 
-### 基本スクリプト
-- `attendance_basic.js` - 基本的な一括入力スクリプト
-- `attendance_smart.js` - 既存データスキップ機能付き
-- `attendance_clockin_only.js` - 出勤時刻のみ設定
-- `attendance_granular.js` - 項目別細かい制御機能
+## 📸 スクリーンショット
 
-### タイミング問題解決版
-- `attendance_timing_robust.js` - タイミング制御強化版
-- `attendance_ultra_robust.js` - 超安定版（推奨）
+<img src="docs/images/popup-screenshot.png" alt="拡張機能のポップアップ画面" width="400">
 
-## 🚀 使用方法
+美しいUIで直感的に勤怠データの一括入力設定が可能です。
 
-### 1. 基本実行
-```javascript
-// 超安定版（推奨）
-executeAttendanceBulkInputUltra()
+## ⚠️ 重要な注意事項
 
-// タイミング制御強化版
-executeAttendanceBulkInput()
+- **非公式ツール**: この拡張機能はMoney Forward社とは一切関係のない非公式ツールです
+- **自己責任**: 使用は完全に自己責任でお願いします
+- **利用規約遵守**: Money Forward クラウド勤怠の利用規約に違反しないよう注意してください
+- **データバックアップ**: 重要な勤怠データは事前にバックアップを取ることを強く推奨します
 
-// 基本版
-executeAttendanceBulkInputBasic()
+## 🌟 主な機能
+
+- **項目別入力制御**: 出勤・退勤・休憩開始・休憩終了の各項目を個別に制御
+- **既存データスキップ**: 既に入力されているデータをスキップする機能
+- **美しいUI**: グラデーションカラーを使用したモダンなポップアップデザイン
+- **設定の永続化**: 設定をChromeストレージに自動保存
+- **詳細ログ出力**: 処理状況をリアルタイムで確認
+- **タイミング問題解決**: 動的DOM対応とイベント発火による高い信頼性
+- **複数セレクタ対応**: Money Forward クラウド勤怠の様々なレイアウトに対応
+
+## 🚀 インストール
+
+### 方法1: ソースコードからインストール（推奨）
+
+#### 1. リポジトリをダウンロード
+```bash
+# Gitでクローン
+git clone https://github.com/jaganoer-works/kintai-helper-extension.git
+
+# またはZIPダウンロード
+# GitHubページの「Code」ボタン → 「Download ZIP」
 ```
 
-### 2. 設定変更
-```javascript
-// 時刻設定を変更
-updateAttendanceConfigUltra({
-    startTime: '08:30',
-    endTime: '17:30',
-    breakTime: '01:00'
-})
-
-// 項目別設定
-updateAttendanceConfigUltra({
-    fields: {
-        startTime: { enabled: true, skipIfExists: true },
-        endTime: { enabled: false, skipIfExists: false },
-        breakTime: { enabled: true, skipIfExists: false }
-    }
-})
+#### 2. 依存関係のインストールとビルド
+```bash
+cd kintai-helper-extension
+npm install
+npm run build
 ```
 
-## ⚡ タイミング問題の解決策
+#### 3. Chromeに拡張機能を追加
+1. Chrome/Edgeブラウザで `chrome://extensions/` を開く
+2. 右上の「デベロッパーモード」をONにする
+3. 「パッケージ化されていない拡張機能を読み込む」をクリック
+4. ダウンロードしたフォルダ（`kintai-helper-extension`）を選択
+5. 拡張機能が追加されたことを確認
 
-### 問題の原因
-- DOMの動的生成
-- ページ読み込みタイミング
-- JavaScriptの非同期処理
-- 要素の表示遅延
+### 方法2: ビルド済みファイルを使用
 
-### 解決策
+1. [Releases](https://github.com/jaganoer-works/kintai-helper-extension/releases)から最新版をダウンロード（提供予定）
+2. ZIPファイルを解凍
+3. 上記の「Chromeに拡張機能を追加」の手順3-5を実行
 
-#### 1. タイミング制御強化版 (`attendance_timing_robust.js`)
-- **DOM読み込み待機機能**: `document.readyState` の確認
-- **要素存在確認の強化**: 複数のセレクターパターン対応
-- **待機時間の調整**: 適切な間隔での処理
-- **エラーハンドリング強化**: リトライ機能
+## 📖 使用方法
 
-#### 2. 超安定版 (`attendance_ultra_robust.js`) - 推奨
-- **MutationObserver**: DOM変更の監視
-- **要素完全読み込み待機**: `offsetParent` による表示確認
-- **リトライ機能強化**: 最大20回のリトライ
-- **複数セレクターパターン**: 9種類のセレクター対応
-- **オブザーバー自動クリーンアップ**: メモリリーク防止
+### 1. 前提条件
+- Money Forward クラウド勤怠のアカウントを持っていること
+- Chrome/Edge ブラウザを使用していること
+- 勤怠の一括入力権限があること
 
-### 使用推奨順序
+### 2. 基本的な使用手順
 
-1. **超安定版** (`attendance_ultra_robust.js`) - 最も安定
-2. **タイミング制御強化版** (`attendance_timing_robust.js`) - バランス型
-3. **基本版** - シンプルな場合のみ
+#### ステップ1: Money Forward クラウド勤怠にログイン
+1. ブラウザで[Money Forward クラウド勤怠](https://attendance.moneyforward.com/)にアクセス
+2. 自社のアカウントでログイン
 
-## 🔧 詳細設定
+#### ステップ2: 一括入力画面を開く
+1. メニューから「勤怠」を選択
+2. 「一括入力」または「月次勤怠入力」画面を開く
+3. 対象の年月を選択
 
-### 基本設定
-```javascript
-{
-    startTime: '09:00',      // 開始時刻
-    endTime: '18:00',        // 終了時刻
-    breakTime: '01:00',      // 休憩時間
-}
-```
+#### ステップ3: 拡張機能を起動
+1. ブラウザの拡張機能アイコン（パズルピースマーク）をクリック
+2. 「Kintai Helper」拡張機能をクリック
+3. ポップアップウィンドウが表示される
 
-### タイミング制御設定（超安定版）
-```javascript
-{
-    maxRetries: 20,                    // 最大リトライ回数
-    retryDelay: 300,                   // リトライ間隔（ms）
-    waitForElementTimeout: 15000,      // 要素待機タイムアウト（ms）
-    mutationTimeout: 10000             // MutationObserverタイムアウト（ms）
-}
-```
+#### ステップ4: 設定を調整
+ポップアップ画面で以下を設定：
+- **時刻設定**
+  - 出勤時刻（例: 09:00）
+  - 退勤時刻（例: 18:00）
+  - 休憩開始時刻（例: 12:00）
+  - 休憩終了時刻（例: 13:00）
+- **対象設定**
+  - 対象勤怠区分（平日/所定休日/法定休日）
+- **入力項目**
+  - 各項目の入力有無をチェックボックスで選択
+- **既存データのスキップ**
+  - 既に入力済みのデータをスキップするか選択
 
-### 項目別設定
-```javascript
-{
-    fields: {
-        startTime: { 
-            enabled: true,        // 入力するかどうか
-            skipIfExists: true    // 既存データがあればスキップ
-        },
-        endTime: { 
-            enabled: true, 
-            skipIfExists: true 
-        },
-        breakTime: { 
-            enabled: true, 
-            skipIfExists: true 
-        }
-    }
-}
-```
+#### ステップ5: 実行
+1. 「勤怠一括入力実行」ボタンをクリック
+2. 自動的に入力が開始される
+3. 処理完了まで待機（ページを閉じない）
 
-## 📊 対応セレクターパターン
+#### ステップ6: 結果確認
+1. ブラウザのコンソール（F12キー）で詳細ログを確認
+2. 入力された値を画面で確認
+3. 必要に応じて手動で修正
 
-### 勤怠入力行の検索
-```javascript
-[
-    'tr[data-row]',
-    'tr.attendance-row',
-    'tr[id*="attendance"]',
-    'tbody tr',
-    '.attendance-table tr',
-    'table tr',
-    '.table tbody tr',
-    '[class*="attendance"] tr',
-    '[id*="attendance"] tr'
-]
-```
+### 3. 設定オプション詳細
 
-### 開始時刻フィールド
-```javascript
-[
-    'input[name*="start"]',
-    'input[name*="begin"]',
-    'input[name*="clockin"]',
-    'input[placeholder*="開始"]',
-    'input[placeholder*="出勤"]',
-    'input[title*="開始"]',
-    'input[title*="出勤"]',
-    'td:nth-child(1) input',
-    'td:nth-child(2) input',
-    'td:nth-child(3) input'
-]
-```
+#### 時刻設定
+- **出勤時刻**: デフォルト 09:00
+- **退勤時刻**: デフォルト 18:00  
+- **休憩開始**: デフォルト 12:00
+- **休憩終了**: デフォルト 13:00
 
-### 終了時刻フィールド
-```javascript
-[
-    'input[name*="end"]',
-    'input[name*="finish"]',
-    'input[name*="clockout"]',
-    'input[placeholder*="終了"]',
-    'input[placeholder*="退勤"]',
-    'input[title*="終了"]',
-    'input[title*="退勤"]',
-    'td:nth-child(4) input',
-    'td:nth-child(5) input',
-    'td:nth-child(6) input'
-]
-```
+#### 入力制御
+- 各項目（出勤・退勤・休憩開始・終了）の入力有無を個別設定
+- 既存データがある場合のスキップ設定
 
-## 🛠️ トラブルシューティング
-
-### よくある問題と解決策
-
-#### 1. 要素が見つからない
-**症状**: "要素が見つかりません" エラー
-**解決策**: 
-- 超安定版を使用
-- ページの完全読み込みを待つ
-- セレクターパターンの確認
-
-#### 2. 値が設定されない
-**症状**: 入力フィールドに値が反映されない
-**解決策**:
-- 要素の完全読み込み待機
-- イベント発火の確認
-- リトライ機能の活用
-
-#### 3. 一部の行が処理されない
-**症状**: 特定の行がスキップされる
-**解決策**:
-- 既存データチェックの確認
-- フィールド検索パターンの調整
-- ログ出力の確認
-
-### デバッグ方法
-
-#### 1. ログ確認
-```javascript
-// コンソールでログを確認
-console.log(window.attendanceBulkInputUltra.logs);
-```
-
-#### 2. 設定確認
-```javascript
-// 現在の設定を確認
-console.log(window.attendanceBulkInputUltra.config);
-```
-
-#### 3. 手動テスト
-```javascript
-// 特定の要素を手動で検索
-document.querySelectorAll('input[type="text"]');
-```
-
-## 📝 使用例
-
-### 例1: 基本的な一括入力
-```javascript
-// 超安定版で実行
-executeAttendanceBulkInputUltra();
-```
-
-### 例2: カスタム時刻設定
-```javascript
-// 設定を変更して実行
-updateAttendanceConfigUltra({
-    startTime: '08:30',
-    endTime: '17:30',
-    breakTime: '01:30'
-});
-executeAttendanceBulkInputUltra();
-```
-
-### 例3: 出勤時刻のみ設定
-```javascript
-// 出勤時刻のみ有効化
-updateAttendanceConfigUltra({
-    fields: {
-        startTime: { enabled: true, skipIfExists: true },
-        endTime: { enabled: false, skipIfExists: false },
-        breakTime: { enabled: false, skipIfExists: false }
-    }
-});
-executeAttendanceBulkInputUltra();
-```
-
-### 例4: 既存データを上書き
-```javascript
-// 既存データがあっても上書き
-updateAttendanceConfigUltra({
-    fields: {
-        startTime: { enabled: true, skipIfExists: false },
-        endTime: { enabled: true, skipIfExists: false },
-        breakTime: { enabled: true, skipIfExists: false }
-    }
-});
-executeAttendanceBulkInputUltra();
-```
-
-## ⚠️ 注意事項
-
-1. **事前確認**: 実行前にページの構造を確認
-2. **バックアップ**: 重要なデータがある場合は事前にバックアップ
-3. **テスト実行**: 最初は少数の行でテスト
-4. **ブラウザ対応**: モダンブラウザでの使用を推奨
-5. **権限確認**: サイトの利用規約を確認
-
-## 🔄 更新履歴
-
-- **v2.0**: 超安定版追加（MutationObserver対応）
-- **v1.5**: タイミング制御強化版追加
-- **v1.0**: 基本機能実装
-
-## 📞 サポート
-
-問題が発生した場合は、以下の情報を確認してください：
-
-1. ブラウザの種類とバージョン
-2. エラーメッセージの詳細
-3. ページのHTML構造
-4. 実行したスクリプトの種類
-
-詳細なログはコンソールで確認できます。 
-
-# 勤怠管理システム 一括入力 Chrome拡張機能
-
-TypeScriptで開発された勤怠管理システムの一括入力Chrome拡張機能です。勤怠一括入力画面で、DOM解析とブラウザ自動操作により勤怠情報を一括入力できます。
-
-## 機能
-
-- **項目別入力制御**: 各項目（出勤・退勤・休憩開始・休憩終了）ごとに「入力する／しない」を選択可能
-- **項目別スキップ制御**: 各項目ごとに既存データがある場合のスキップ設定
-- **美しいUI**: モダンなデザインのポップアップインターフェース
-- **設定の永続化**: 設定をChromeストレージに保存
-- **詳細なログ出力**: 処理状況をリアルタイムで確認可能
-- **TypeScript対応**: 型安全性と開発効率の向上
-- **タイミング問題解決**: 値設定の信頼性を大幅に向上
-
-## プロジェクト構成
+## 🏗️ プロジェクト構成
 
 ```
 attendance-automation-extension/
@@ -305,243 +133,192 @@ attendance-automation-extension/
 │   ├── utils/
 │   │   └── logger.ts             # ログ出力機能
 │   ├── services/
-│   │   └── attendanceService.ts  # 勤怠入力メインロジック（強化版）
-│   ├── content.ts                # コンテンツスクリプト（非同期対応）
-│   ├── background.ts             # バックグラウンドスクリプト
-│   └── popup.ts                  # ポップアップスクリプト
-├── dist/                         # ビルド出力ディレクトリ
-├── manifest.json                 # Chrome拡張機能マニフェスト
-├── popup.html                    # ポップアップHTML
-├── package.json                  # プロジェクト設定
-├── tsconfig.json                 # TypeScript設定
-└── README.md                     # このファイル
+│   │   └── attendanceService.ts  # メインロジック
+│   ├── content.ts                # コンテンツスクリプト
+│   ├── background.ts             # バックグラウンド処理
+│   └── popup.ts                  # ポップアップ処理
+├── dist/                         # ビルド出力
+├── manifest.json                 # 拡張機能設定
+├── popup.html                    # UI
+└── webpack.config.js             # ビルド設定
 ```
 
-## セットアップ
+## 🛠️ 開発
 
-### 1. 依存関係のインストール
+### 必要要件
+
+- Node.js 16+
+- Chrome/Chromium ブラウザ
+
+### 開発環境セットアップ
 
 ```bash
+# 依存関係のインストール
 npm install
-```
 
-### 2. TypeScriptのビルド
-
-```bash
-npm run build
-```
-
-### 3. Chrome拡張機能のインストール
-
-1. Chromeで `chrome://extensions/` を開く
-2. 「デベロッパーモード」を有効にする
-3. 「パッケージ化されていない拡張機能を読み込む」をクリック
-4. プロジェクトのルートディレクトリを選択
-
-## 使用方法
-
-### 1. 拡張機能を有効化
-
-勤怠管理システムの一括入力ページで拡張機能アイコンをクリックします。
-
-### 2. 設定を調整
-
-ポップアップで以下の設定を行います：
-
-- **時刻設定**: 出勤・退勤・休憩時間を設定
-- **対象設定**: 対象とする勤怠区分を選択
-- **入力項目設定**: 各項目の入力有無を選択
-- **スキップ設定**: 各項目の既存データスキップ有無を選択
-
-### 3. 実行
-
-「勤怠一括入力実行」ボタンをクリックして処理を開始します。
-
-## 設定オプション
-
-### 時刻設定
-- `startTime`: 出勤時刻（デフォルト: 09:00）
-- `endTime`: 退勤時刻（デフォルト: 18:00）
-- `breakStartTime`: 休憩開始時刻（デフォルト: 12:00）
-- `breakEndTime`: 休憩終了時刻（デフォルト: 13:00）
-
-### 対象設定
-- `targetDayType`: 対象勤怠区分（平日、所定休日、法定休日）
-
-### 入力項目設定
-- `useClockIn`: 出勤時刻を自動入力する
-- `useClockOut`: 退勤時刻を自動入力する
-- `useBreakStart`: 休憩開始時刻を自動入力する
-- `useBreakEnd`: 休憩終了時刻を自動入力する
-
-### スキップ設定
-- `skipClockIn`: 出勤時刻の既存データをスキップ
-- `skipClockOut`: 退勤時刻の既存データをスキップ
-- `skipBreakStart`: 休憩開始時刻の既存データをスキップ
-- `skipBreakEnd`: 休憩終了時刻の既存データをスキップ
-
-## ⚡ タイミング問題の解決策
-
-### 問題の原因
-- DOMの動的生成
-- ページ読み込みタイミング
-- JavaScriptの非同期処理
-- 要素の表示遅延
-- 特殊なUIフレームワーク（React/Vue等）の制御
-
-### 解決策
-
-#### 1. 値設定処理の強化
-- **フォーカス・クリック操作**: 要素にフォーカスを当ててから値を設定
-- **複数イベント発火**: input, change, blur, keyup, keydown, pasteイベントを発火
-- **非同期処理**: 適切な待機時間を設けて処理の信頼性を向上
-- **値確認ログ**: 設定前後の値をログ出力してデバッグを支援
-
-#### 2. 処理間隔の調整
-- **150msの処理間隔**: 各行の処理間に適切な待機時間を設定
-- **要素読み込み待機**: 要素が完全に表示されるまで待機
-
-#### 3. エラーハンドリングの強化
-- **リトライ機能**: 値設定失敗時の自動リトライ
-- **詳細ログ**: エラーの原因を特定しやすくするログ出力
-
-### 使用例
-
-#### 既存データを上書きする場合
-```javascript
-// スキップ設定をすべてオフにして実行
-// ポップアップで「既存データをスキップ」のチェックをすべて外す
-```
-
-#### 特定項目のみ上書きする場合
-```javascript
-// 出勤時刻のみ上書き、他はスキップ
-// 出勤時刻のスキップ設定のみオフ、他はオン
-```
-
-## 開発
-
-### 開発モード
-
-```bash
+# 開発モード（ファイル監視）
 npm run dev
-```
 
-### ビルド
-
-```bash
+# プロダクションビルド
 npm run build
 ```
 
-### ファイル監視
+### 開発ワークフロー
 
-```bash
-npm run watch
-```
+1. コードを修正
+2. `npm run dev` でビルド
+3. Chrome拡張機能を再読み込み
+4. テスト実行
 
-## 技術スタック
+## 🧪 テスト
 
-- **TypeScript**: 型安全性と開発効率の向上
-- **Chrome Extension API**: ブラウザ拡張機能開発
-- **DOM API**: ページ要素の操作
-- **Chrome Storage API**: 設定の永続化
+現在手動テストで品質を確保しています。自動テストフレームワークの導入を検討中です。
+
+### テスト手順
+
+1. Money Forward クラウド勤怠の各種レイアウトで動作確認
+2. 異なる勤怠区分での動作テスト
+3. 既存データがある状態でのスキップ機能テスト
+
+## 🔧 技術スタック
+
+- **TypeScript**: 型安全性と開発効率
+- **Chrome Extension API v3**: モダンな拡張機能開発
 - **Webpack**: モジュールバンドリング
+- **Chrome Storage API**: 設定永続化
 
-## 型定義
+## 🤖 AI開発支援ツール
 
-### AttendanceConfig
-```typescript
-interface AttendanceConfig {
-  startTime: string;
-  endTime: string;
-  breakStartTime: string;
-  breakEndTime: string;
-  targetDayType: string;
-  enableLogging: boolean;
-  showDetailedLog: boolean;
-  useClockIn: boolean;
-  useClockOut: boolean;
-  useBreakStart: boolean;
-  useBreakEnd: boolean;
-  skipClockIn: boolean;
-  skipClockOut: boolean;
-  skipBreakStart: boolean;
-  skipBreakEnd: boolean;
-}
-```
+このプロジェクトは以下のAIツールを活用して開発されています：
 
-### ProcessResult
-```typescript
-interface ProcessResult {
-  success: {
-    clockIn: number;
-    clockOut: number;
-    breakStart: number;
-    breakEnd: number;
-  };
-  error: {
-    clockIn: number;
-    clockOut: number;
-    breakStart: number;
-    breakEnd: number;
-  };
-  skipped: {
-    clockIn: number;
-    clockOut: number;
-    breakStart: number;
-    breakEnd: number;
-  };
-  ignored: {
-    clockIn: number;
-    clockOut: number;
-    breakStart: number;
-    breakEnd: number;
-  };
-  total: number;
-}
-```
+- **Claude Code**: コードレビュー、リファクタリング、ドキュメント作成
+- **Cursor**: AI支援によるコード補完と実装
+- **TypeScript**: 型安全性による開発効率の向上
 
-## トラブルシューティング
+AIツールの活用により、高品質で保守性の高いコードベースを効率的に構築しています。
 
-### よくある問題
+## 🤝 コントリビューション
 
-1. **「勤怠データが見つかりません」エラー**
-   - 正しい勤怠一括入力画面にいることを確認
-   - ページの読み込みが完了していることを確認
+プルリクエストやイシューの投稿を歓迎します！
 
-2. **「対象となる行が見つかりません」エラー**
-   - `targetDayType`の設定を確認
-   - テーブルにデータが表示されていることを確認
+### コントリビューションガイドライン
 
-3. **拡張機能が動作しない**
-   - 拡張機能が有効になっているか確認
-   - ページを再読み込みしてから再実行
+1. Issueで改善提案や バグ報告
+2. フォークしてフィーチャーブランチを作成
+3. コードの品質を保つため型チェックを実行
+4. プルリクエストを作成
 
-4. **値が反映されない**
-   - 詳細ログを確認して値設定の状況をチェック
-   - スキップ設定が正しく設定されているか確認
-   - ページの再読み込みを試行
+### 開発時の注意点
+
+- TypeScriptの型チェックを必ず実行
+- コンソールエラーが出ないことを確認
+- Money Forward クラウド勤怠の各種画面でテスト
+- 利用規約に違反しないよう機能設計を慎重に
+
+## 📋 対応システム
+
+**Money Forward クラウド勤怠**の一括入力画面に特化して設計されています:
+
+- Money Forward クラウド勤怠の標準的なテーブルレイアウト
+- 動的に生成される勤怠入力フィールド
+- 各種勤怠区分（平日、所定休日、法定休日）への対応
+
+## ⚡ タイミング問題への対応
+
+### 解決済みの問題
+
+- DOM動的生成への対応
+- 非同期UIフレームワーク対応
+- イベント発火による確実な値設定
+- MutationObserver活用による要素待機
+
+## 🐛 トラブルシューティング
+
+### よくある問題と解決方法
+
+#### 拡張機能アイコンが表示されない
+**原因**: 拡張機能が正しくインストールされていない
+**解決方法**:
+1. `chrome://extensions/` を開く
+2. 拡張機能が有効になっているか確認
+3. 無効の場合は右下のトグルをONに
+4. ブラウザを再起動
+
+#### ポップアップが開かない
+**原因**: ページの読み込みが完了していない
+**解決方法**:
+1. ページを完全にリロード（Ctrl/Cmd + R）
+2. 数秒待ってから拡張機能アイコンをクリック
+
+#### 「勤怠データが見つかりません」エラー
+**原因**: 正しいページにいない
+**解決方法**:
+1. Money Forward クラウド勤怠の一括入力画面であることを確認
+2. 月次の勤怠データが表示されているか確認
+3. 別の月に移動して再度試す
+
+#### 値が入力されない
+**原因**: DOM構造の変更またはタイミング問題
+**解決方法**:
+1. F12でコンソールを開き、エラーメッセージを確認
+2. ページをリロードして再実行
+3. 既存データのスキップ設定を確認
+4. 時刻の形式が正しいか確認（HH:MM形式）
+
+#### 一部の行だけ処理されない
+**原因**: 対象勤怠区分の設定ミス
+**解決方法**:
+1. ポップアップで対象勤怠区分を確認
+2. 「平日」「所定休日」「法定休日」の適切な選択
+3. 詳細ログで該当行の勤怠区分を確認
 
 ### デバッグ方法
 
-1. Chrome DevToolsのコンソールでログを確認
-2. 拡張機能の管理ページでエラーを確認
-3. 設定値を一時的に変更して動作確認
-4. 詳細ログ機能を有効にして処理状況を確認
+1. **コンソールログの確認**
+   - F12キーでデベロッパーツールを開く
+   - 「Console」タブを選択
+   - エラーメッセージや処理ログを確認
 
-## ライセンス
+2. **詳細ログの有効化**
+   - ポップアップで「詳細ログを表示」にチェック
+   - より詳細な処理状況を確認可能
 
-MIT License
+3. **手動での要素確認**
+   ```javascript
+   // コンソールで実行して要素を確認
+   document.querySelectorAll('input[type="text"]')
+   ```
 
-## 更新履歴
+## 📄 ライセンス
 
-- **v1.1.0**: タイミング問題解決版
-  - 値設定処理の大幅強化
-  - 非同期処理への対応
-  - デバッグ機能の追加
-  - エラーハンドリングの改善
-- **v1.0.0**: TypeScript版Chrome拡張機能としてリリース
-  - 項目別入力制御機能
-  - 美しいUIデザイン
-  - 設定の永続化
-  - 型安全性の向上 
+MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
+
+## 🔄 更新履歴
+
+### v1.0.0 (2025-01-11)
+- Money Forward クラウド勤怠対応の初回安定版リリース
+- TypeScript版Chrome拡張機能として完全動作
+- 項目別入力制御機能
+- 既存データスキップ機能  
+- タイミング問題解決済み
+- 美しいUIデザイン
+- 設定の永続化対応
+- Chrome Extension API v3対応
+
+## 📞 サポート
+
+- 🐛 バグ報告: [Issues](https://github.com/jaganoer-works/kintai-helper-extension/issues)
+- 💡 機能提案: [Issues](https://github.com/jaganoer-works/kintai-helper-extension/issues)  
+- 📧 その他の問い合わせ: Issues経由でお願いします
+
+**注意**: Money Forward社への直接の問い合わせはご遠慮ください。このツールは非公式であり、同社とは一切関係ありません。
+
+---
+
+⭐ このプロジェクトが役に立ったら、ぜひスターをお願いします！
+
+## 免責事項
+
+- この拡張機能の使用により生じた如何なる損害についても、開発者は一切の責任を負いません
+- Money Forward クラウド勤怠の仕様変更により、予告なく動作しなくなる可能性があります
+- 使用前に必ずテスト環境での動作確認を行ってください

@@ -1,7 +1,7 @@
 {
-  "name": "attendance-automation-extension",
+  "name": "kintai-helper-extension",
   "version": "1.0.0",
-  "description": "勤怠管理システムの一括入力Chrome拡張機能",
+  "description": "勤怠管理システムの一括入力を効率化するChrome拡張機能",
   "main": "dist/content.js",
   "scripts": {
     "build": "webpack --mode=production",
